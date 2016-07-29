@@ -3,7 +3,7 @@ package util;
 import java.util.TimerTask;
 
 import com.esotericsoftware.kryonet.Connection;
-import com.trading.networking.GameServer;
+import server.GameServer;
 
 public class UpdateConnections extends TimerTask {
 

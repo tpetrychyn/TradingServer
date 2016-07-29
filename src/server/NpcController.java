@@ -73,10 +73,8 @@ public class NpcController extends Actor {
         	}		
         }
         
-		if (lastUpdate > 1) {
-			GameServer.updateActor(instance, id);
-			lastUpdate = 0;
-		}	
+        if (getX() != oldPos.x || getY() != oldPos.y)
+        	instance.updateActor(id);
 	}
 	
 	public void setBounds(int minX, int minY, int maxX, int maxY) {

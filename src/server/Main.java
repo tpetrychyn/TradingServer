@@ -24,14 +24,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.GdxNativesLoader;
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Server;
-import com.trading.networking.packets.NpcMovePacket;
-
-import models.PlayerData;
-import util.UpdateConnections;
 
 public class Main {
  
@@ -61,35 +53,12 @@ public class Main {
 		
 		manager.finishLoading();
 		
-		world = new World(new Vector2(0,0), false);
-		map = manager.get("assets/maps/map.tmx");
-		
-		collisionLayers = (MapLayers) map.getLayers();
-
-		
 		//Scanner s = new Scanner(System.in);
 
 		System.out.println("Starting server...");
 		
-		group = new Group();
-		
-		Instance gameWorld = new Instance("assets/maps/map.tmx");
-		
 		t = new GameServer();
 	    headless = new HeadlessApplication(t);
-		
-		for(Iterator<Actor> i = gameWorld.getActors().iterator(); i.hasNext(); ) {
-			try {
-				NpcController n = (NpcController) i.next();
-				group.addActor(n);
-			} catch(Exception e) {
-				
-			}
-		}
-		
-    	// And From your main() method or any other method
-    	//Timer timer = new Timer();
-    	//timer.schedule(new ServerTick(), 0, 1);
 
 	}
 	

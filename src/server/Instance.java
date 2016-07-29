@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.SnapshotArray;
+import com.trading.networking.packets.NpcMovePacket;
 
 import util.Util;
 
@@ -29,6 +30,7 @@ public class Instance {
 	public int worldWidth;
 	public int worldHeight;
 	public MapLayers collisionLayers;
+	public Group players;
 	
 	private static String[] Beginning = { "Kr", "Ca", "Ra", "Mrok", "Cru",
 	         "Ray", "Bre", "Zed", "Drak", "Mor", "Jag", "Mer", "Jar", "Mjol",
@@ -56,10 +58,15 @@ public class Instance {
 		world = new World(new Vector2(0, 0), true);
 		this.collisionLayers = (MapLayers) getTiledMap().getLayers();
 		actors = new Group();
+		players = new Group();
 	}
 	
 	public void addPlayer(Player p) {
-		actors.addActor(p);
+		players.addActor(p);
+	}
+	
+	public SnapshotArray<Actor> getPlayers() {
+		return players.getChildren();
 	}
 	
 	public SnapshotArray<Actor> getActors() {
@@ -120,5 +127,16 @@ public class Instance {
 			}
 		}
 		return false;
+	}
+	
+	public void updateActor(int id) {
+		Actor a = getActors().items[id];
+		if (a==null)
+			return;
+		NpcMovePacket n = new NpcMovePacket(a.getX(), a.getY(), id, a.getName());
+		for (int i=0;i<getPlayers().size;i++) {
+			Player p = (Player)getPlayers().items[i];
+			GameServer.server.sendToTCP(p.id, n);
+		}
 	}
 }

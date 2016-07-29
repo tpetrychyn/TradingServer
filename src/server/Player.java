@@ -9,13 +9,12 @@ import util.Direction;
 
 public class Player extends Actor  {
 	
-	public World world;
 	public Direction direction = Direction.SOUTH;
     float playerSpeed = 200f;
     public boolean isMoving = false;
     public Sprite sprite;
-    
-	public int myId = 0;
+    public Instance instance;
+	public int id = 0;
     
     float stateTime = 0;
     BitmapFont font;
@@ -33,9 +32,9 @@ public class Player extends Actor  {
 		return pos;
     }
     
-    /*public Vector2 getWorldPosition() {
-    	return world.getWorldPosition(getPosition());
-    }*/
+    public Vector2 getWorldPosition() {
+    	return instance.getWorldPosition(getPosition());
+    }
     
     public void setWorldPosition(Vector2 pos) {
     	setX((pos.x + ((pos.y-pos.x)/2)) * 64);
@@ -55,8 +54,8 @@ public class Player extends Actor  {
     	setY(transform.y);
     }
 	
-	public Player(World world) {
-		this.world = world;
+	public Player(Instance instance) {
+		this.instance = instance;
 		setWidth(24);
 		setHeight(38);
 	}

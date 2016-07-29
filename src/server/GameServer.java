@@ -9,25 +9,20 @@ import java.util.Map.Entry;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.trading.networking.packets.NpcMovePacket;
 
-import models.PlayerData;
-import util.UpdateConnections;
 import util.Util;
 
-class GameServer implements ApplicationListener{
+public class GameServer implements ApplicationListener{
 
 		public static Server server;
 		public static final int PORT = 54555;
 		public static List<Integer> connections = new ArrayList<Integer>();
-		public HashMap<Integer, Instance> instances = new HashMap<Integer, Instance>();
-		public HashMap<Integer, Player> ships = new HashMap<Integer, Player>();
+		public static HashMap<Integer, Instance> instances = new HashMap<Integer, Instance>();
+		public static HashMap<Integer, Player> players = new HashMap<Integer, Player>();
 
 		public static Player getPlayer(int id, HashMap<Integer, Player> s) {
 			return s.get(id);
@@ -72,32 +67,7 @@ class GameServer implements ApplicationListener{
 			Kryo kryo = server.getKryo();
 			kryo.setRegistrationRequired(false);
 			
-			server.addListener(new Listener() {
-				public void received(Connection connection, Object object) {
-					if (object instanceof PlayerData) {
-						PlayerData info = ((PlayerData) object);
-
-						System.out.println(connection.getID());
-						System.out.println(info.pos);
-
-						if (getPlayer(connection.getID(), UpdateConnections.ccr.players) != null) {
-							//UpdateConnections.ccr.players.replace(connection.getID(), info.players);
-						}
-
-					}
-				}
-
-				public void connected(Connection connection) {
-					System.out.println("new client with id " + connection.getID());
-					//connection.sendTCP(world);
-					/*UpdateConnections.ccr.players.put(connection.getID(),
-							new Player(world));*/
-				}
-
-				public void disconnected(Connection connection) {
-					UpdateConnections.ccr.players.remove(connection.getID());
-				}
-			});
+			server.addListener(new ServerListener());
 		}
 
 		@Override
@@ -145,13 +115,5 @@ class GameServer implements ApplicationListener{
 		public void dispose() {
 			// TODO Auto-generated method stub
 			
-		}
-		
-		public static void updateActor(Instance instance, int id) {
-			Actor a = instance.getActors().items[id];
-			if (a==null)
-				return;
-			NpcMovePacket n = new NpcMovePacket(a.getX(), a.getY(), id, a.getName());
-			server.sendToAllTCP(n);
 		}
 	}
