@@ -1,0 +1,132 @@
+package server;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
+
+import util.Direction;
+import util.Util;
+
+public class NpcController extends Actor {
+	
+	Sprite sprite;
+	GameWorld world;
+	Vector2 velocity = new Vector2();
+	Animation[] walkAnimations;
+	Animation walk;
+	Task randomWalk;
+	Vector2 minBounds;
+	Vector2 maxBounds;
+	Direction direction = Direction.SOUTH;
+	public int id;
+	float stateTime;
+
+	public NpcController(GameWorld world) {
+		//super(world);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public NpcController(float x, float y, GameWorld world, int id, float scale) {
+		//super(image, x, y, world, id, scale);
+		this.world = world;
+		setX(x);
+		setY(y);
+		setWidth(24);
+		setHeight(36);
+		this.id = id;
+	}
+	float lastUpdate = 0;
+	
+	public void act(float alpha) {
+		float deltaTime = Gdx.graphics.getDeltaTime();
+		lastUpdate += deltaTime;
+		
+		Vector2 oldPos = new Vector2(getX(), getY());
+        setX(getX() + velocity.x * deltaTime);
+        setY(getY() + velocity.y * deltaTime);
+        
+        Vector2 newPos = new Vector2(getX(), getY());
+        if (world.getWorldPosition(newPos).x < 0 || world.getWorldPosition(newPos).y < 0.2
+        		|| world.getWorldPosition(newPos).x > 99.8 || world.getWorldPosition(newPos).y > 100
+        		|| world.isCellBlocked(world.getWorldPosition(newPos).x, world.getWorldPosition(newPos).y)
+        		//|| world.actorCollision(this)){
+        		){
+        	setY(oldPos.y);
+        	setX(oldPos.x);
+        	velocity.x = 0f;
+    		velocity.y = 0f;
+        } 
+        
+        if (maxBounds != null && minBounds != null) {
+        	if (world.getWorldPosition(newPos).x < minBounds.x || world.getWorldPosition(newPos).y < minBounds.y
+        			|| world.getWorldPosition(newPos).x > maxBounds.x || world.getWorldPosition(newPos).y > maxBounds.y) {
+        		setX(oldPos.x);
+        		setY(oldPos.y);
+        		velocity.x = 0f;
+        		velocity.y = 0f;
+        	}		
+        }
+        
+		if (lastUpdate > 1) {
+			Main.updateActor(id);
+			lastUpdate = 0;
+		}	
+	}
+	
+	public void setBounds(int minX, int minY, int maxX, int maxY) {
+		minBounds = new Vector2(minX, minY);
+		maxBounds = new Vector2(maxX, maxY);
+	}
+	
+	void randomWalk() {
+		int randomWalk = Util.randomRange(0, 8);
+		switch (randomWalk) {
+		case 0:
+			velocity.x = 20f;
+			velocity.y = 0f;
+			direction = Direction.EAST;
+			break;
+		case 1:
+			velocity.x = -20f;
+			velocity.y = 0f;
+			direction = Direction.WEST;
+			break;
+		case 2:
+			velocity.y = 20f;
+			velocity.x = 0f;
+			direction = Direction.NORTH;
+			break;
+		case 3: 
+			velocity.y = -20f;
+			velocity.x = 0f;
+			direction = Direction.SOUTH;
+			break;
+		default:
+			velocity.x = 0;
+			velocity.y = 0;
+			break;
+		}
+	}
+	
+	public void startRandomWalk(int delay) {
+		randomWalk = new Timer().scheduleTask(new Task(){
+		    @Override
+		    public void run() {
+		        randomWalk();
+		    }
+		}, 0, Util.randomRange(1, delay));
+	}
+	
+	public void stopRandomWalk() {
+		randomWalk.cancel();
+		velocity.x = 0;
+		velocity.y = 0;
+	}
+
+}
