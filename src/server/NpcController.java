@@ -16,7 +16,7 @@ import util.Util;
 public class NpcController extends Actor {
 	
 	Sprite sprite;
-	GameWorld world;
+	Instance instance;
 	Vector2 velocity = new Vector2();
 	Animation[] walkAnimations;
 	Animation walk;
@@ -32,9 +32,9 @@ public class NpcController extends Actor {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public NpcController(float x, float y, GameWorld world, int id, float scale) {
+	public NpcController(float x, float y, Instance instance, int id, float scale) {
 		//super(image, x, y, world, id, scale);
-		this.world = world;
+		this.instance = instance;
 		setX(x);
 		setY(y);
 		setWidth(24);
@@ -52,9 +52,9 @@ public class NpcController extends Actor {
         setY(getY() + velocity.y * deltaTime);
         
         Vector2 newPos = new Vector2(getX(), getY());
-        if (world.getWorldPosition(newPos).x < 0 || world.getWorldPosition(newPos).y < 0.2
-        		|| world.getWorldPosition(newPos).x > 99.8 || world.getWorldPosition(newPos).y > 100
-        		|| world.isCellBlocked(world.getWorldPosition(newPos).x, world.getWorldPosition(newPos).y)
+        if (instance.getWorldPosition(newPos).x < 0 || instance.getWorldPosition(newPos).y < 0.2
+        		|| instance.getWorldPosition(newPos).x > 99.8 || instance.getWorldPosition(newPos).y > 100
+        		|| instance.isCellBlocked(instance.getWorldPosition(newPos).x, instance.getWorldPosition(newPos).y)
         		//|| world.actorCollision(this)){
         		){
         	setY(oldPos.y);
@@ -64,8 +64,8 @@ public class NpcController extends Actor {
         } 
         
         if (maxBounds != null && minBounds != null) {
-        	if (world.getWorldPosition(newPos).x < minBounds.x || world.getWorldPosition(newPos).y < minBounds.y
-        			|| world.getWorldPosition(newPos).x > maxBounds.x || world.getWorldPosition(newPos).y > maxBounds.y) {
+        	if (instance.getWorldPosition(newPos).x < minBounds.x || instance.getWorldPosition(newPos).y < minBounds.y
+        			|| instance.getWorldPosition(newPos).x > maxBounds.x || instance.getWorldPosition(newPos).y > maxBounds.y) {
         		setX(oldPos.x);
         		setY(oldPos.y);
         		velocity.x = 0f;
@@ -74,7 +74,8 @@ public class NpcController extends Actor {
         }
         
 		if (lastUpdate > 1) {
-			Main.updateActor(id);
+			GameServer.updateActor(instance, id);
+			System.out.println("acted on instance: " + instance.id);
 			lastUpdate = 0;
 		}	
 	}

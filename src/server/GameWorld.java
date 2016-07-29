@@ -1,32 +1,29 @@
 package server;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.utils.SnapshotArray;
 
 import util.Util;
 
 public class GameWorld {
 	
-	World world;
-	TiledMap map;
-	List<Actor> actors;
-	MapLayers collisionLayers;
+	public World world;
+	public TiledMap map;
+	public Group actors;
+	//public List<Actor> actors;
+	public MapLayers collisionLayers;
 	
 	private static String[] Beginning = { "Kr", "Ca", "Ra", "Mrok", "Cru",
 	         "Ray", "Bre", "Zed", "Drak", "Mor", "Jag", "Mer", "Jar", "Mjol",
@@ -40,7 +37,7 @@ public class GameWorld {
 	   
 	   private static Random rand = new Random();
 
-	   public static String generateName() {
+	   public String generateName() {
 
 	      return Beginning[rand.nextInt(Beginning.length)] + 
 	            Middle[rand.nextInt(Middle.length)]+
@@ -52,21 +49,15 @@ public class GameWorld {
 		map = new TmxMapLoader().load(mapFile);
 		world = new World(new Vector2(0, 0), true);
 		this.collisionLayers = (MapLayers) getTiledMap().getLayers();
-		actors = new ArrayList<Actor>();
-		for (int i=0;i<100;i++) {
-			NpcController npc = new NpcController( Util.randomRange(0, 50), Util.randomRange(0, 50), this, i, 0.5f);
-			//npc.startRandomWalk(1);
-			npc.setName(generateName());
-			actors.add(npc);
-		}
+		actors = new Group();
 	}
 	
 	public void addPlayer(Player p) {
-		actors.add(p);
+		actors.addActor(p);
 	}
 	
-	public List<Actor> getActors() {
-		return actors;
+	public SnapshotArray<Actor> getActors() {
+		return actors.getChildren();
 	}
 	
 	public World getWorld() {

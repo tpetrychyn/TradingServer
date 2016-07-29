@@ -6,7 +6,6 @@
 	<classpathentry kind="lib" path="libs/kryonet-2.21-all.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-box2d.jar" sourcepath="libs/gdx-box2d-sources.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-box2d-natives.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Taylor/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-lwjgl/1.9.3/88bc98f6155e1f63462ba03622ffaf25557dccc0/gdx-backend-lwjgl-1.9.3.jar" sourcepath="C:/Users/Taylor/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-lwjgl/1.9.3/7b68e24f28daece0760c36360cfa9da18057a443/gdx-backend-lwjgl-1.9.3-sources.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-natives.jar"/>
 	<classpathentry kind="lib" path="libs/lwjgl-natives.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-backend-lwjgl-natives.jar"/>

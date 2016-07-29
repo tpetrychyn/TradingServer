@@ -3,8 +3,7 @@ package util;
 import java.util.TimerTask;
 
 import com.esotericsoftware.kryonet.Connection;
-
-import server.Main;
+import com.trading.networking.GameServer;
 
 public class UpdateConnections extends TimerTask {
 
@@ -17,10 +16,10 @@ public class UpdateConnections extends TimerTask {
         connected = 0;
 
 
-        for(@SuppressWarnings("unused") Connection c : Main.server.getConnections()){
+        for(@SuppressWarnings("unused") Connection c : GameServer.server.getConnections()){
             connected++;
             ccr.connected = connected;
-            Main.server.sendToAllTCP(ccr);
+            GameServer.server.sendToAllTCP(ccr);
         }
 
 
