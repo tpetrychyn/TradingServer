@@ -27,7 +27,7 @@ public class NpcController extends Actor {
 	public int id;
 	float stateTime;
 
-	public NpcController(GameWorld world) {
+	public NpcController(Instance world) {
 		//super(world);
 		// TODO Auto-generated constructor stub
 	}
@@ -35,8 +35,7 @@ public class NpcController extends Actor {
 	public NpcController(float x, float y, Instance instance, int id, float scale) {
 		//super(image, x, y, world, id, scale);
 		this.instance = instance;
-		setX(x);
-		setY(y);
+		instance.setWorldPosition(this, new Vector2(x, y));
 		setWidth(24);
 		setHeight(36);
 		this.id = id;
@@ -52,16 +51,17 @@ public class NpcController extends Actor {
         setY(getY() + velocity.y * deltaTime);
         
         Vector2 newPos = new Vector2(getX(), getY());
-        if (instance.getWorldPosition(newPos).x < 0 || instance.getWorldPosition(newPos).y < 0.2
-        		|| instance.getWorldPosition(newPos).x > 99.8 || instance.getWorldPosition(newPos).y > 100
-        		|| instance.isCellBlocked(instance.getWorldPosition(newPos).x, instance.getWorldPosition(newPos).y)
-        		//|| world.actorCollision(this)){
-        		){
-        	setY(oldPos.y);
-        	setX(oldPos.x);
-        	velocity.x = 0f;
-    		velocity.y = 0f;
-        } 
+        if (velocity.x > 0 || velocity.y > 0) {
+	        if (instance.getWorldPosition(newPos).x < 0 || instance.getWorldPosition(newPos).y < 0.2
+	        		|| instance.getWorldPosition(newPos).x > 99.8 || instance.getWorldPosition(newPos).y > 100
+	        		|| instance.isCellBlocked(instance.getWorldPosition(newPos).x, instance.getWorldPosition(newPos).y)
+	        		|| instance.actorCollision(this)){
+	        	setY(oldPos.y);
+	        	setX(oldPos.x);
+	        	velocity.x = 0f;
+	    		velocity.y = 0f;
+	        } 
+        }
         
         if (maxBounds != null && minBounds != null) {
         	if (instance.getWorldPosition(newPos).x < minBounds.x || instance.getWorldPosition(newPos).y < minBounds.y
@@ -75,7 +75,6 @@ public class NpcController extends Actor {
         
 		if (lastUpdate > 1) {
 			GameServer.updateActor(instance, id);
-			System.out.println("acted on instance: " + instance.id);
 			lastUpdate = 0;
 		}	
 	}

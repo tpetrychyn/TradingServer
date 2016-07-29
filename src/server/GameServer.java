@@ -29,7 +29,7 @@ class GameServer implements ApplicationListener{
 		public HashMap<Integer, Instance> instances = new HashMap<Integer, Instance>();
 		public HashMap<Integer, Player> ships = new HashMap<Integer, Player>();
 
-		public static Player getShip(int id, HashMap<Integer, Player> s) {
+		public static Player getPlayer(int id, HashMap<Integer, Player> s) {
 			return s.get(id);
 		}
 		
@@ -49,13 +49,25 @@ class GameServer implements ApplicationListener{
 			
 			Instance in = new Instance("assets/maps/map.tmx");
 			in.id = 1;
+			in.name = "Instance 1";
 			for (int i=0;i<100;i++) {
 				NpcController npc = new NpcController( Util.randomRange(0, 50), Util.randomRange(0, 50), in, i, 0.5f);
-				//npc.startRandomWalk(1);
+				npc.startRandomWalk(5);
 				npc.setName(in.generateName());
 				in.actors.addActor(npc);
 			}
-			instances.put(1, in);
+			instances.put(in.id, in);
+			
+			in = new Instance("assets/maps/map.tmx");
+			in.id = 2;
+			in.name = "Instance 2";
+			for (int i=0;i<100;i++) {
+				NpcController npc = new NpcController( Util.randomRange(0, 50), Util.randomRange(0, 50), in, i, 0.5f);
+				npc.startRandomWalk(5);
+				npc.setName(in.generateName());
+				in.actors.addActor(npc);
+			}
+			instances.put(in.id, in);
 			
 			Kryo kryo = server.getKryo();
 			kryo.setRegistrationRequired(false);
@@ -68,7 +80,7 @@ class GameServer implements ApplicationListener{
 						System.out.println(connection.getID());
 						System.out.println(info.pos);
 
-						if (getShip(connection.getID(), UpdateConnections.ccr.players) != null) {
+						if (getPlayer(connection.getID(), UpdateConnections.ccr.players) != null) {
 							//UpdateConnections.ccr.players.replace(connection.getID(), info.players);
 						}
 
@@ -103,14 +115,13 @@ class GameServer implements ApplicationListener{
 			tickRate += deltaTime;
 			
 			//60 ticks per second
-			if (tickRate < 60f)
+			if (tickRate < 1/60f)
 				return;
 			
 			//iterate through each instance and act
 			Iterator<Entry<Integer, Instance>> iterator = instances.entrySet().iterator();
 	        while(iterator.hasNext()){
 	            HashMap.Entry<Integer, Instance> instance = iterator.next();
-	            //System.out.println(instance.getKey() +" :: "+ instance.getValue());
 	            instance.getValue().actors.act(deltaTime);
 	            //You can remove elements while iterating.
 	            //iterator.remove();

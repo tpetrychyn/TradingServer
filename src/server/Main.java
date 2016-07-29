@@ -73,7 +73,7 @@ public class Main {
 		
 		group = new Group();
 		
-		GameWorld gameWorld = new GameWorld("assets/maps/map.tmx");
+		Instance gameWorld = new Instance("assets/maps/map.tmx");
 		
 		t = new GameServer();
 	    headless = new HeadlessApplication(t);
