@@ -126,6 +126,17 @@ public class Instance {
  				return true;
  			}
         }
+    	for (int key: players.keySet()) {
+    		Player a = players.get(key);
+    		
+ 		    if (a.hashCode() == self.hashCode())
+ 		    	continue;
+ 			Rectangle p = new Rectangle(self.getX(), self.getY(), self.getWidth(), self.getHeight());
+ 			Rectangle n = new Rectangle(a.getX(), a.getY(), a.getWidth(), a.getHeight());
+ 			if (Intersector.overlaps(p, n)) {
+ 				return true;
+ 			}
+        }
 		return false;
 	}
 	

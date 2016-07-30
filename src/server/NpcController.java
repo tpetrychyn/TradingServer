@@ -37,7 +37,7 @@ public class NpcController extends Actor {
 		this.instance = instance;
 		instance.setWorldPosition(this, new Vector2(x, y));
 		setWidth(24);
-		setHeight(36);
+		setHeight(38);
 		this.id = id;
 	}
 	float lastUpdate = 0;
@@ -51,7 +51,7 @@ public class NpcController extends Actor {
         setY(getY() + velocity.y * deltaTime);
         
         Vector2 newPos = new Vector2(getX(), getY());
-        if (velocity.x > 0 || velocity.y > 0) {
+        if (Math.abs(velocity.x) > 0 || Math.abs(velocity.y) > 0) {
 	        if (instance.getWorldPosition(newPos).x < 0 || instance.getWorldPosition(newPos).y < 0.2
 	        		|| instance.getWorldPosition(newPos).x > 99.8 || instance.getWorldPosition(newPos).y > 100
 	        		|| instance.isCellBlocked(instance.getWorldPosition(newPos).x, instance.getWorldPosition(newPos).y)
@@ -83,7 +83,7 @@ public class NpcController extends Actor {
 	}
 	
 	void randomWalk() {
-		int randomWalk = Util.randomRange(0, 8);
+		int randomWalk = Util.randomRange(0, 3);
 		switch (randomWalk) {
 		case 0:
 			velocity.x = 20f;

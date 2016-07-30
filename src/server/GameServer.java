@@ -45,15 +45,19 @@ public class GameServer implements ApplicationListener{
 			Instance in = new Instance("assets/maps/map.tmx");
 			in.id = 1;
 			in.name = "Instance 1";
-			for (int i=0;i<20;i++) {
+			/*for (int i=0;i<20;i++) {
 				NpcController npc = new NpcController( Util.randomRange(0, 20), Util.randomRange(0, 20), in, i, 0.5f);
 				npc.startRandomWalk(5);
 				npc.setName(in.id + " " + in.generateName());
 				in.actors.put(npc.id, npc);
-			}
+			}*/
+			NpcController npcn = new NpcController(10, 10, in, 0, 0.5f);
+			npcn.startRandomWalk(5);
+			npcn.setName("tester");
+			in.actors.put(npcn.id, npcn);
 			instances.put(in.id, in);
 			
-			in = new Instance("assets/maps/map.tmx");
+			/*in = new Instance("assets/maps/map.tmx");
 			in.id = 2;
 			in.name = "Instance 2";
 			for (int i=0;i<20;i++) {
@@ -62,7 +66,7 @@ public class GameServer implements ApplicationListener{
 				npc.setName(in.id + " " + in.generateName());
 				in.actors.put(npc.id, npc);
 			}
-			instances.put(in.id, in);
+			instances.put(in.id, in);*/
 			
 			Kryo kryo = server.getKryo();
 			kryo.setRegistrationRequired(false);
