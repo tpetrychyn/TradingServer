@@ -9,8 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
+import com.trading.entities.Direction;
 
-import util.Direction;
 import util.Util;
 
 public class NpcController extends Actor {
@@ -40,11 +40,9 @@ public class NpcController extends Actor {
 		setHeight(38);
 		this.id = id;
 	}
-	float lastUpdate = 0;
 	
 	public void act(float alpha) {
 		float deltaTime = Gdx.graphics.getDeltaTime();
-		lastUpdate += deltaTime;
 		
 		Vector2 oldPos = new Vector2(getX(), getY());
         setX(getX() + velocity.x * deltaTime);

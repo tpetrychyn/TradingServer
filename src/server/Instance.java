@@ -174,6 +174,7 @@ public class Instance {
 		if (a==null)
 			return;
 		NpcMovePacket n = new NpcMovePacket(a.getX(), a.getY(), id, a.getName());
+		n.direction = ((NpcController) a).direction;
 		Iterator<Entry<Integer, Player>> iterator = players.entrySet().iterator();
 		while(iterator.hasNext()){
             HashMap.Entry<Integer, Player> player = iterator.next();
