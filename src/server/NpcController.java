@@ -81,7 +81,7 @@ public class NpcController extends Actor {
 	}
 	
 	void randomWalk() {
-		int randomWalk = Util.randomRange(0, 3);
+		int randomWalk = Util.randomRange(0, 8);
 		switch (randomWalk) {
 		case 0:
 			velocity.x = 20f;
