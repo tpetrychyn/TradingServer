@@ -45,7 +45,8 @@ public class Main {
 		
 		AssetManager manager = new AssetManager();
 		manager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
-		manager.load("assets/maps/map.tmx", TiledMap.class);
+		manager.load("Maps/map.tmx", TiledMap.class);
+		manager.load("Maps/house.tmx", TiledMap.class);
 		
 		manager.finishLoading();
 

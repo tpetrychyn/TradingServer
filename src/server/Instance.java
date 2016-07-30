@@ -5,6 +5,11 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Map.Entry;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -33,6 +38,7 @@ public class Instance {
 	public MapLayers collisionLayers;
 	public HashMap<Integer, Actor> actors = new HashMap<Integer, Actor>();
 	public HashMap<Integer, Player> players = new HashMap<Integer, Player>();
+	private int totalLayers = 0;
 	
 	private static String[] Beginning = { "Kr", "Ca", "Ra", "Mrok", "Cru",
 	         "Ray", "Bre", "Zed", "Drak", "Mor", "Jag", "Mer", "Jar", "Mjol",
@@ -53,12 +59,35 @@ public class Instance {
 	   }
 	
 	public Instance(String mapFile) {
-		map = new TmxMapLoader().load(mapFile);
+		map = new TmxMapLoader().load("Maps/" + mapFile);
 		MapProperties prop = map.getProperties();
 		worldWidth = prop.get("width", Integer.class);
 		worldHeight = prop.get("width", Integer.class);
 		world = new World(new Vector2(0, 0), true);
 		this.collisionLayers = (MapLayers) getTiledMap().getLayers();
+		
+		//parse json file containing each maps info to get layers and total layers used for rendering and collision
+		JSONObject obj;
+		try {
+			obj = new JSONObject(Gdx.files.internal("Maps/Maps.json").readString());
+			JSONArray arr = obj.getJSONArray("maps");
+			for (int i = 0; i < arr.length(); i++)
+			{
+				if (arr.getJSONObject(i).getString("file").equals(mapFile)) {
+					JSONArray bg = arr.getJSONObject(i).getJSONArray("backgroundLayers");
+					for (int x=0;x<bg.length();x++) {
+						totalLayers++;
+					}
+					
+					JSONArray fg = arr.getJSONObject(i).getJSONArray("foregroundLayers");
+					for (int x=0;x<fg.length();x++) {
+						totalLayers++;
+					}
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void addPlayer(Player p) {
@@ -94,7 +123,7 @@ public class Instance {
 	
 	public boolean isCellBlocked(float x, float y) {
 		boolean blocked = false;
-		for (int i=0;i<3;i++) {
+		for (int i=0;i<totalLayers;i++) {
 			TiledMapTileLayer coll = (TiledMapTileLayer) collisionLayers.get(i);
 			Cell cell = coll.getCell((int) (x), (int) (y));
 			blocked = cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey("blocked");
