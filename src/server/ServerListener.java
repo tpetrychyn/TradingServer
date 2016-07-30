@@ -72,6 +72,38 @@ public class ServerListener extends Listener {
 	            		GameServer.server.sendToUDP(pInstance.id, packet);
 	            }
 			}
+			/*if (packet.action.equals("join")) {
+				System.out.println("joined" + packet.id);
+				if (GameServer.instances.get(packet.id) == null) {
+					
+					Instance in = new Instance("house.tmx");
+					in.id = 2;
+					in.name = "Instance 2";
+					NpcController npc = new NpcController(12, 5, in, 1, 0.5f);
+					npc.startRandomWalk(5);
+					npc.setName(in.id + " " + in.generateName());
+					in.actors.put(npc.id, npc);
+					GameServer.instances.put(in.id, in);
+					System.out.println("created " + packet.id);
+				}
+				
+				//put player in instance hashmap
+				Player p = new Player(GameServer.instances.get(packet.id));
+				p.id = packet.id;
+				p.setPosition(packet.playerData.pos);
+				GameServer.instances.get(packet.id).addPlayer(p);
+				
+				//send player all npcs in that instance?
+				NpcMovePacket[] npcs = new NpcMovePacket[GameServer.instances.get(packet.id).actors.size()];
+				int index = 0;
+				for (int key: GameServer.instances.get(packet.id).actors.keySet()) {
+					NpcController c = (NpcController) GameServer.instances.get(packet.id).actors.get(key);
+					NpcMovePacket n = new NpcMovePacket(c.getX(), c.getY(), c.id, c.getName());
+					npcs[index] = n;
+					index++;
+	            }
+				GameServer.server.sendToUDP(connection.getID(), npcs);
+			}*/
 		}
 	}
 
