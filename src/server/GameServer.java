@@ -45,22 +45,22 @@ public class GameServer implements ApplicationListener{
 			Instance in = new Instance("assets/maps/map.tmx");
 			in.id = 1;
 			in.name = "Instance 1";
-			for (int i=0;i<100;i++) {
-				NpcController npc = new NpcController( Util.randomRange(0, 50), Util.randomRange(0, 50), in, i, 0.5f);
+			for (int i=0;i<20;i++) {
+				NpcController npc = new NpcController( Util.randomRange(0, 20), Util.randomRange(0, 20), in, i, 0.5f);
 				npc.startRandomWalk(5);
-				npc.setName(in.generateName());
-				in.actors.addActor(npc);
+				npc.setName(in.id + " " + in.generateName());
+				in.actors.put(npc.id, npc);
 			}
 			instances.put(in.id, in);
 			
 			in = new Instance("assets/maps/map.tmx");
 			in.id = 2;
 			in.name = "Instance 2";
-			for (int i=0;i<100;i++) {
-				NpcController npc = new NpcController( Util.randomRange(0, 50), Util.randomRange(0, 50), in, i, 0.5f);
+			for (int i=0;i<20;i++) {
+				NpcController npc = new NpcController( Util.randomRange(0, 20), Util.randomRange(0, 20), in, i, 0.5f);
 				npc.startRandomWalk(5);
-				npc.setName(in.generateName());
-				in.actors.addActor(npc);
+				npc.setName(in.id + " " + in.generateName());
+				in.actors.put(npc.id, npc);
 			}
 			instances.put(in.id, in);
 			
@@ -91,10 +91,15 @@ public class GameServer implements ApplicationListener{
 			//iterate through each instance and act
 			Iterator<Entry<Integer, Instance>> iterator = instances.entrySet().iterator();
 	        while(iterator.hasNext()){
-	            HashMap.Entry<Integer, Instance> instance = iterator.next();
-	            instance.getValue().actors.act(deltaTime);
-	            //You can remove elements while iterating.
-	            //iterator.remove();
+	            Instance instance = iterator.next().getValue();
+	            for (int key: instance.getActors().keySet()) {
+	            	instance.actors.get(key).act(deltaTime);
+		        }
+	            
+	           /* for (int key: instance.getValue().players.keySet()) {
+	            	Player p = instance.getValue().players.get(key);
+	            	p.act(deltaTime);
+	            }*/
 	            tickRate = 0;
 	        }
 		}

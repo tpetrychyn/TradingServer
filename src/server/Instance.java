@@ -1,7 +1,9 @@
 package server;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapProperties;
@@ -26,11 +28,11 @@ public class Instance {
 	public String name;
 	public World world;
 	public TiledMap map;
-	public Group actors;
 	public int worldWidth;
 	public int worldHeight;
 	public MapLayers collisionLayers;
-	public Group players;
+	public HashMap<Integer, Actor> actors = new HashMap<Integer, Actor>();
+	public HashMap<Integer, Player> players = new HashMap<Integer, Player>();
 	
 	private static String[] Beginning = { "Kr", "Ca", "Ra", "Mrok", "Cru",
 	         "Ray", "Bre", "Zed", "Drak", "Mor", "Jag", "Mer", "Jar", "Mjol",
@@ -57,20 +59,18 @@ public class Instance {
 		worldHeight = prop.get("width", Integer.class);
 		world = new World(new Vector2(0, 0), true);
 		this.collisionLayers = (MapLayers) getTiledMap().getLayers();
-		actors = new Group();
-		players = new Group();
 	}
 	
 	public void addPlayer(Player p) {
-		players.addActor(p);
+		players.put(p.id, p);
 	}
 	
-	public SnapshotArray<Actor> getPlayers() {
-		return players.getChildren();
+	public HashMap<Integer, Player> getPlayers() {
+		return players;
 	}
 	
-	public SnapshotArray<Actor> getActors() {
-		return actors.getChildren();
+	public HashMap<Integer, Actor> getActors() {
+		return actors;
 	}
 	
 	public World getWorld() {
@@ -115,28 +115,29 @@ public class Instance {
     	return Util.twoDToIso(getTileCoordinates(pt, 32));
     }
 	
-	public boolean actorCollision(Actor self) {
-		for(Iterator<Actor> i = getActors().iterator(); i.hasNext(); ) {
-		    Actor a = i.next();
-		    if (a.hashCode() == self.hashCode())
-		    	continue;
-			Rectangle p = new Rectangle(self.getX(), self.getY(), self.getWidth(), self.getHeight());
-			Rectangle n = new Rectangle(a.getX(), a.getY(), a.getWidth(), a.getHeight());
-			if (Intersector.overlaps(p, n)) {
-				return true;
-			}
-		}
+    public boolean actorCollision(Actor self) {
+    	for (int key: actors.keySet()) {
+    		Actor a = actors.get(key);
+ 		    if (a.hashCode() == self.hashCode())
+ 		    	continue;
+ 			Rectangle p = new Rectangle(self.getX(), self.getY(), self.getWidth(), self.getHeight());
+ 			Rectangle n = new Rectangle(a.getX(), a.getY(), a.getWidth(), a.getHeight());
+ 			if (Intersector.overlaps(p, n)) {
+ 				return true;
+ 			}
+        }
 		return false;
 	}
 	
 	public void updateActor(int id) {
-		Actor a = getActors().items[id];
+		Actor a = getActors().get(id);
 		if (a==null)
 			return;
 		NpcMovePacket n = new NpcMovePacket(a.getX(), a.getY(), id, a.getName());
-		for (int i=0;i<getPlayers().size;i++) {
-			Player p = (Player)getPlayers().items[i];
-			GameServer.server.sendToTCP(p.id, n);
-		}
+		Iterator<Entry<Integer, Player>> iterator = players.entrySet().iterator();
+		while(iterator.hasNext()){
+            HashMap.Entry<Integer, Player> player = iterator.next();
+			GameServer.server.sendToTCP(player.getValue().id, n);
+        }
 	}
 }

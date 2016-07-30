@@ -27,13 +27,9 @@ import com.badlogic.gdx.utils.GdxNativesLoader;
 
 public class Main {
  
-	
-	public static World world;
-	public static TiledMap map;
-	public static MapLayers collisionLayers;
 	public static Group group;
 	static HeadlessApplication headless;
-	static GameServer t;
+	static GameServer gameServer;
 	
 	public static void loadHeadless() {
         LwjglNativesLoader.load();
@@ -52,26 +48,11 @@ public class Main {
 		manager.load("assets/maps/map.tmx", TiledMap.class);
 		
 		manager.finishLoading();
-		
-		//Scanner s = new Scanner(System.in);
 
 		System.out.println("Starting server...");
 		
-		t = new GameServer();
-	    headless = new HeadlessApplication(t);
+		gameServer = new GameServer();
+	    headless = new HeadlessApplication(gameServer);
 
-	}
-	
-	
-	public boolean isCellBlocked(float x, float y) {
-		boolean blocked = false;
-		for (int i=0;i<3;i++) {
-			TiledMapTileLayer coll = (TiledMapTileLayer) collisionLayers.get(i);
-			Cell cell = coll.getCell((int) (x), (int) (y));
-			blocked = cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey("blocked");
-			if (blocked == true)
-				return true;
-		}
-		return blocked;
 	}
 }
