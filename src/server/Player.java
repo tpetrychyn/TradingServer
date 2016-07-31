@@ -56,8 +56,8 @@ public class Player extends Actor  {
 	
 	public Player(Instance instance) {
 		this.instance = instance;
-		setWidth(24);
-		setHeight(38);
+		setWidth(20);
+		setHeight(32);
 	}
 	
 }
