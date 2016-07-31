@@ -39,9 +39,10 @@ public class ServerListener extends Listener {
 			
 			//put player in instance hashmap
 			Player p = new Player(GameServer.instances.get(info.instance));
-			p.id = info.id;
+			p.id = connection.getID();
 			p.setPosition(info.playerData.pos);
 			GameServer.instances.get(info.instance).addPlayer(p);
+			System.out.println("put player" + connection.getID() + " in to instance " + GameServer.instances.get(info.instance).id);
 			GameServer.players.put(connection.getID(), p);
 			
 			//update all other players in the instance about the new position
@@ -124,6 +125,7 @@ public class ServerListener extends Listener {
 				p.setPosition(packet.playerData.pos);
 				System.out.println(packet.playerData.pos);
 				GameServer.instances.get(packet.id).addPlayer(p);
+				System.out.println("put player" + connection.getID() + " in to instance " + GameServer.instances.get(packet.id).id);
 				GameServer.players.put(connection.getID(), p);
 				
 				//create a new player data packet for the joined player
@@ -157,6 +159,8 @@ public class ServerListener extends Listener {
 		System.out.println("diconnection: removed " + connection.getID() + " from " + i.id);
 		GameServer.instances.get(connection.getID()).getPlayers().remove(connection.getID());
 		iPacket.clientId = connection.getID();
+		
+		System.out.println("instance " + i.id + " now has " + i.players.size() + " players");
 		
 		if (GameServer.instances.get(i.id).getPlayers().size() <= 0) {
 			GameServer.instances.remove(i.id);

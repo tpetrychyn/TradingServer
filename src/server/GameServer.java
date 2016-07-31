@@ -92,11 +92,7 @@ public class GameServer implements ApplicationListener{
 	            Instance instance = iterator.next().getValue();
 	            for (int key: instance.getActors().keySet()) {
 	            	instance.actors.get(key).act(deltaTime);
-	            	if (instance.id == 2) {
-		            	System.out.println(key + instance.actors.get(key).getX() + " " + instance.actors.get(key).getY());
-		            }
 		        }
-	            
 	        }
 	        tickRate = 0;
 		}
