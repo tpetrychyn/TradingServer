@@ -55,7 +55,7 @@ public class GameServer implements ApplicationListener{
 			}
 			
 			for (int i=0;i<200;i++) {
-				Tree tree = new Tree(Util.randomRange(0, 99), Util.randomRange(0, 99), in, WorldObjects.trees.get(0));
+				Tree tree = new Tree(Util.randomRange(0, 99), Util.randomRange(0, 99), in, WorldObjects.trees.get((int) Util.randomRange(0, 2)));
 				tree.id = i;
 				in.worldObjects.put(i, tree);
 			}
