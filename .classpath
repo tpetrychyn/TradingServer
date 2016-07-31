@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="libs/mockito-all-2.0.0-beta.jar"/>
 	<classpathentry kind="src" path="/Trading Game-core"/>
 	<classpathentry kind="lib" path="libs/java-json.jar"/>
+	<classpathentry kind="lib" path="libs/gson-2.2.2.jar" sourcepath="libs/gson-2.2.2-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

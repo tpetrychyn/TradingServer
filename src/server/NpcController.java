@@ -17,6 +17,7 @@ public class NpcController extends Actor {
 	
 	Sprite sprite;
 	Instance instance;
+	public float speed = 100f;
 	Vector2 velocity = new Vector2();
 	Animation[] walkAnimations;
 	Animation walk;
@@ -51,7 +52,7 @@ public class NpcController extends Actor {
         Vector2 newPos = new Vector2(getX(), getY());
         if (Math.abs(velocity.x) > 0 || Math.abs(velocity.y) > 0) {
 	        if (instance.getWorldPosition(newPos).x < 0 || instance.getWorldPosition(newPos).y < 0.2
-	        		|| instance.getWorldPosition(newPos).x > 99.8 || instance.getWorldPosition(newPos).y > 100
+	        		|| instance.getWorldPosition(newPos).x > instance.worldWidth || instance.getWorldPosition(newPos).y > instance.worldHeight
 	        		|| instance.isCellBlocked(instance.getWorldPosition(newPos).x, instance.getWorldPosition(newPos).y)
 	        		|| instance.actorCollision(this)){
 	        	setY(oldPos.y);
@@ -81,25 +82,25 @@ public class NpcController extends Actor {
 	}
 	
 	void randomWalk() {
-		int randomWalk = Util.randomRange(0, 8);
+		int randomWalk = (int) Util.randomRange(0, 3);
 		switch (randomWalk) {
 		case 0:
-			velocity.x = 20f;
+			velocity.x = speed;
 			velocity.y = 0f;
 			direction = Direction.EAST;
 			break;
 		case 1:
-			velocity.x = -20f;
+			velocity.x = -speed;
 			velocity.y = 0f;
 			direction = Direction.WEST;
 			break;
 		case 2:
-			velocity.y = 20f;
+			velocity.y = speed;
 			velocity.x = 0f;
 			direction = Direction.NORTH;
 			break;
 		case 3: 
-			velocity.y = -20f;
+			velocity.y = - speed;
 			velocity.x = 0f;
 			direction = Direction.SOUTH;
 			break;

@@ -21,10 +21,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.utils.SnapshotArray;
+import com.trading.entities.Tree;
+import com.trading.entities.WorldObjects;
+import com.trading.game.Game;
 import com.trading.networking.packets.NpcMovePacket;
 
+import entities.WorldActor;
 import util.Util;
 
 public class Instance {
@@ -38,6 +40,7 @@ public class Instance {
 	public MapLayers collisionLayers;
 	public HashMap<Integer, Actor> actors = new HashMap<Integer, Actor>();
 	public HashMap<Integer, Player> players = new HashMap<Integer, Player>();
+	public HashMap<Integer, WorldActor> worldObjects = new HashMap<Integer, WorldActor>();
 	private int totalLayers = 0;
 	
 	private static String[] Beginning = { "Kr", "Ca", "Ra", "Mrok", "Cru",
@@ -88,6 +91,7 @@ public class Instance {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	
 	}
 	
 	public void addPlayer(Player p) {
@@ -166,6 +170,16 @@ public class Instance {
  				return true;
  			}
         }
+    	for (int key: worldObjects.keySet()) {
+    		WorldActor a = worldObjects.get(key);
+ 		    if (a.hashCode() == self.hashCode())
+ 		    	continue;
+ 			Rectangle p = new Rectangle(self.getX(), self.getY(), self.getWidth(), self.getHeight());
+ 			Rectangle n = new Rectangle(a.realX, a.realY, a.realWidth, a.realHeight);
+ 			if (Intersector.overlaps(p, n)) {
+ 				return true;
+ 			}
+        }
 		return false;
 	}
 	
@@ -178,7 +192,7 @@ public class Instance {
 		Iterator<Entry<Integer, Player>> iterator = players.entrySet().iterator();
 		while(iterator.hasNext()){
             HashMap.Entry<Integer, Player> player = iterator.next();
-			GameServer.server.sendToTCP(player.getValue().id, n);
+			GameServer.server.sendToUDP(player.getValue().id, n);
         }
 	}
 }

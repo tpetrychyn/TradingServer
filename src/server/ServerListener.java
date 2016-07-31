@@ -1,12 +1,15 @@
 package server;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.trading.entities.Direction;
 import com.trading.entities.PlayerData;
 import com.trading.networking.packets.InstancePacket;
 import com.trading.networking.packets.NpcMovePacket;
 import com.trading.networking.packets.PlayerDataPacket;
+import com.trading.networking.packets.WorldObjectPacket;
+
+import entities.WorldActor;
 
 
 public class ServerListener extends Listener {
@@ -55,19 +58,22 @@ public class ServerListener extends Listener {
 				GameServer.instances.get(packet.id).getPlayers().remove(connection.getID());
 				packet.clientId = connection.getID();
 				
+				if (GameServer.instances.get(packet.id).getPlayers().size() <= 0) {
+					GameServer.instances.remove(packet.id);
+					System.out.println("should remove instance" + packet.id);
+					return;
+				}
 				for (int key: GameServer.instances.get(packet.id).players.keySet()) {
 	            	Player pInstance = GameServer.instances.get(packet.id).players.get(key);
-	            	if (pInstance.id != connection.getID())
-	            		GameServer.server.sendToUDP(pInstance.id, packet);
+	            	if (key != connection.getID())
+	            		GameServer.server.sendToTCP(pInstance.id, packet);
 	            }
 			}
 			
 			if (packet.action.equals("join")) {
-				
 				if (GameServer.instances.get(packet.id) == null) {
-					
 					Instance in = new Instance("house.tmx");
-					in.id = 2;
+					in.id = packet.id;
 					in.name = "Instance 2";
 					NpcController npc = new NpcController(12, 5, in, 0, 0.5f);
 					npc.startRandomWalk(5);
@@ -77,7 +83,7 @@ public class ServerListener extends Listener {
 					System.out.println("created " + packet.id);
 				}
 				
-				//send player all npcs in that instance?
+				//send player all npcs in that instance
 				NpcMovePacket[] npcs = new NpcMovePacket[GameServer.instances.get(packet.id).actors.size()];
 				int index = 0;
 				for (int key: GameServer.instances.get(packet.id).actors.keySet()) {
@@ -87,6 +93,51 @@ public class ServerListener extends Listener {
 					index++;
 	            }
 				GameServer.server.sendToTCP(connection.getID(), npcs);
+				
+				//send player all world objects
+				WorldObjectPacket[] worldObjs = new WorldObjectPacket[GameServer.instances.get(packet.id).worldObjects.size()];
+				index = 0;
+				for (int key: GameServer.instances.get(packet.id).worldObjects.keySet()) {
+					WorldActor a = GameServer.instances.get(packet.id).worldObjects.get(key);
+					WorldObjectPacket p = new WorldObjectPacket(a.getX(), a.getY(), a.id, a.type, a.typeId);
+					worldObjs[index] = p;
+					index++;
+	            }
+				GameServer.server.sendToTCP(connection.getID(), worldObjs);
+				
+				//send player all players in that instance
+				PlayerDataPacket[] players = new PlayerDataPacket[GameServer.instances.get(packet.id).players.size()];
+				index = 0;
+				for (int key: GameServer.instances.get(packet.id).players.keySet()) {
+					Player player = (Player) GameServer.instances.get(packet.id).players.get(key);
+					PlayerDataPacket p = new PlayerDataPacket(player.id, packet.id, player.getPosition(), Direction.SOUTH);
+					players[index] = p;
+					index++;
+	            }
+				GameServer.server.sendToTCP(connection.getID(), players);
+				
+				//put player in instance hashmap
+				Player p = new Player(GameServer.instances.get(packet.id));
+				p.id = connection.getID();
+				System.out.println(packet);
+				p.setPosition(packet.playerData.pos);
+				System.out.println(packet.playerData.pos);
+				GameServer.instances.get(packet.id).addPlayer(p);
+				
+				//create a new player data packet for the joined player
+				PlayerDataPacket info = new PlayerDataPacket();
+				info.id = p.id;
+				info.instance = packet.id;
+				info.playerData.pos = p.getPosition();
+				System.out.println(p.getPosition());
+				info.playerData.pId = p.id;
+				
+				//update all other players in the instance about the new player
+				for (int key: GameServer.instances.get(packet.id).players.keySet()) {
+	            	Player pInstance = GameServer.instances.get(packet.id).players.get(key);
+	            	if (pInstance.id != connection.getID())
+	            		GameServer.server.sendToUDP(pInstance.id, info);
+	            }
 			}
 		}
 	}

@@ -9,11 +9,11 @@ import java.util.Map.Entry;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Server;
-import com.trading.networking.packets.NpcMovePacket;
 
+import entities.WorldObjects;
+import entities.Tree;
 import util.Util;
 
 public class GameServer implements ApplicationListener{
@@ -28,10 +28,12 @@ public class GameServer implements ApplicationListener{
 			return s.get(id);
 		}
 		
+		WorldObjects objects;
+		
 		@Override
 		public void create() {
-			server = new Server();
-			//Timer updateConnections = new Timer();
+			objects = new WorldObjects();
+			server = new Server(20000, 20000);
 			server.start();
 			
 			try {
@@ -45,12 +47,19 @@ public class GameServer implements ApplicationListener{
 			Instance in = new Instance("map.tmx");
 			in.id = 1;
 			in.name = "Instance 1";
-			for (int i=0;i<20;i++) {
+			for (int i=0;i<50;i++) {
 				NpcController npc = new NpcController( Util.randomRange(0, 20), Util.randomRange(0, 20), in, i, 0.5f);
 				npc.startRandomWalk(5);
 				npc.setName(in.id + " " + in.generateName());
 				in.actors.put(npc.id, npc);
 			}
+			
+			for (int i=0;i<200;i++) {
+				Tree tree = new Tree(Util.randomRange(0, 99), Util.randomRange(0, 99), in, WorldObjects.trees.get(0));
+				tree.id = i;
+				in.worldObjects.put(i, tree);
+			}
+			
 			instances.put(in.id, in);
 			
 			Kryo kryo = server.getKryo();
@@ -83,9 +92,13 @@ public class GameServer implements ApplicationListener{
 	            Instance instance = iterator.next().getValue();
 	            for (int key: instance.getActors().keySet()) {
 	            	instance.actors.get(key).act(deltaTime);
+	            	if (instance.id == 2) {
+		            	System.out.println(key + instance.actors.get(key).getX() + " " + instance.actors.get(key).getY());
+		            }
 		        }
-	            tickRate = 0;
+	            
 	        }
+	        tickRate = 0;
 		}
 
 		@Override

@@ -6,10 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Util {
 	static Random rand = new Random();
-	public static int randomRange(int min, int max) {
+	public static float randomRange(int min, int max) {
 	    // nextInt is normally exclusive of the top value,
 	    // so add 1 to make it inclusive
-	    int randomNum = rand.nextInt((max - min) + 1) + min;
+	    float randomNum = rand.nextFloat() * (max - min) + min;
 
 	    return randomNum;
 	}
