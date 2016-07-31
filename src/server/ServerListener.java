@@ -42,7 +42,8 @@ public class ServerListener extends Listener {
 			p.id = connection.getID();
 			p.setPosition(info.playerData.pos);
 			GameServer.instances.get(info.instance).addPlayer(p);
-			System.out.println("put player" + connection.getID() + " in to instance " + GameServer.instances.get(info.instance).id);
+			
+			//System.out.println("put player" + connection.getID() + " in to instance " + GameServer.instances.get(info.instance).id);
 			GameServer.players.put(connection.getID(), p);
 			
 			//update all other players in the instance about the new position
@@ -123,9 +124,8 @@ public class ServerListener extends Listener {
 				p.id = connection.getID();
 				System.out.println(packet);
 				p.setPosition(packet.playerData.pos);
-				System.out.println(packet.playerData.pos);
 				GameServer.instances.get(packet.id).addPlayer(p);
-				System.out.println("put player" + connection.getID() + " in to instance " + GameServer.instances.get(packet.id).id);
+				System.out.println("put player" + connection.getID() + " in to instance " + GameServer.instances.get(packet.id).id + " at " + packet.playerData.pos);
 				GameServer.players.put(connection.getID(), p);
 				
 				//create a new player data packet for the joined player
