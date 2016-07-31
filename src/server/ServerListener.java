@@ -42,6 +42,7 @@ public class ServerListener extends Listener {
 			p.id = info.id;
 			p.setPosition(info.playerData.pos);
 			GameServer.instances.get(info.instance).addPlayer(p);
+			GameServer.players.put(connection.getID(), p);
 			
 			//update all other players in the instance about the new position
 			for (int key: GameServer.instances.get(info.instance).players.keySet()) {
@@ -123,6 +124,7 @@ public class ServerListener extends Listener {
 				p.setPosition(packet.playerData.pos);
 				System.out.println(packet.playerData.pos);
 				GameServer.instances.get(packet.id).addPlayer(p);
+				GameServer.players.put(connection.getID(), p);
 				
 				//create a new player data packet for the joined player
 				PlayerDataPacket info = new PlayerDataPacket();
@@ -147,5 +149,24 @@ public class ServerListener extends Listener {
 	}
 
 	public void disconnected(Connection connection) {
+		
+		Player p = GameServer.players.get(connection.getID());
+		Instance i = GameServer.instances.get(p.instance.id);
+		InstancePacket iPacket = new InstancePacket(i.id, "leave");
+		
+		System.out.println("diconnection: removed " + connection.getID() + " from " + i.id);
+		GameServer.instances.get(connection.getID()).getPlayers().remove(connection.getID());
+		iPacket.clientId = connection.getID();
+		
+		if (GameServer.instances.get(i.id).getPlayers().size() <= 0) {
+			GameServer.instances.remove(i.id);
+			System.out.println("should remove instance" + i.id);
+			return;
+		}
+		for (int key: GameServer.instances.get(i.id).players.keySet()) {
+        	Player pInstance = GameServer.instances.get(i.id).players.get(key);
+        	if (key != connection.getID())
+        		GameServer.server.sendToTCP(pInstance.id, iPacket);
+        }
 	}
 }
