@@ -16,5 +16,6 @@
 	<classpathentry kind="src" path="/Trading Game-core"/>
 	<classpathentry kind="lib" path="libs/java-json.jar"/>
 	<classpathentry kind="lib" path="libs/gson-2.2.2.jar" sourcepath="libs/gson-2.2.2-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Taylor/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-tools/1.9.3/78afd28e2e7d75efa966dacf8b885b2a88a309a9/gdx-tools-1.9.3.jar" sourcepath="C:/Users/Taylor/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-tools/1.9.3/18bf7c8801a06248b8216c9848220a4b91f05307/gdx-tools-1.9.3-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

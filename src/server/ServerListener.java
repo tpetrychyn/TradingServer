@@ -152,21 +152,33 @@ public class ServerListener extends Listener {
 
 	public void disconnected(Connection connection) {
 		
+		//get the player from the playerlist
 		Player p = GameServer.players.get(connection.getID());
-		Instance i = GameServer.instances.get(p.instance.id);
-		InstancePacket iPacket = new InstancePacket(i.id, "leave");
 		
-		System.out.println("diconnection: removed " + connection.getID() + " from " + i.id);
-		GameServer.instances.get(connection.getID()).getPlayers().remove(connection.getID());
+		//get the instance that the player was in
+		Instance i = GameServer.instances.get(p.instance.id);
+		
+		//create a packet to send to all players in the instance to tell them about the left player
+		InstancePacket iPacket = new InstancePacket(i.id, "leave");
 		iPacket.clientId = connection.getID();
 		
+		//remove the player from the instances player list
+		GameServer.instances.get(i.id).getPlayers().remove(connection.getID());
+		System.out.println("diconnection: removed " + connection.getID() + " from " + i.id);
 		System.out.println("instance " + i.id + " now has " + i.players.size() + " players");
 		
+		//remove the player from the servers playerlist
+		GameServer.players.remove(connection.getID());
+		System.out.println("Players online: " +  GameServer.players.size());
+		
+		//if theres no players left in the instance delete it
 		if (GameServer.instances.get(i.id).getPlayers().size() <= 0) {
 			GameServer.instances.remove(i.id);
 			System.out.println("should remove instance" + i.id);
 			return;
 		}
+		
+		//tell all players in the instance about the left player
 		for (int key: GameServer.instances.get(i.id).players.keySet()) {
         	Player pInstance = GameServer.instances.get(i.id).players.get(key);
         	if (key != connection.getID())
