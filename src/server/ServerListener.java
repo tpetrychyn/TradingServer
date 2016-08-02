@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.trading.entities.Direction;
 import com.trading.entities.PlayerData;
+import com.trading.networking.packets.DoneLoading;
 import com.trading.networking.packets.InstancePacket;
 import com.trading.networking.packets.NpcMovePacket;
 import com.trading.networking.packets.PlayerDataPacket;
@@ -142,6 +143,9 @@ public class ServerListener extends Listener {
 	            	if (pInstance.id != connection.getID())
 	            		GameServer.server.sendToUDP(pInstance.id, info);
 	            }
+				
+				System.out.println("sent doneloading");
+				GameServer.server.sendToTCP(connection.getID(), new DoneLoading());
 			}
 		}
 	}
